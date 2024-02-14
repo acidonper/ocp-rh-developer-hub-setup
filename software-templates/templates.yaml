@@ -6,5 +6,5 @@ metadata:
 spec:
   type: url
   targets:
-   - https://github.com/janus-idp/software-templates/blob/main/scaffolder-templates/go-backend-template/template.yaml
+   - https://github.com/acidonper/ocp-rh-developer-hub-setup/blob/master/software-templates/scaffolders/jump-app/template.yaml
 
