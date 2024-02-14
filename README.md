@@ -148,9 +148,13 @@ WIP
 ```$bash
     appConfig:
       catalog:
+        rules:
+          - allow: [Component, System, API, Resource, Location, Template]
         locations:
           - target: https://github.com/acidonper/ocp-rh-developer-hub-setup/blob/master/software-templates/templates.yaml
             type: url
+            rules:
+              - allow: [Template]
 ```
 
 ## Author
