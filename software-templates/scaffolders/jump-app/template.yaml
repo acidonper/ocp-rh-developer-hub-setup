@@ -1,14 +1,13 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: quarkus-web-template
-  title: Quarkus Service with ArgoCD and a Tekton Pipeline
-  description: Create a simple microservice using Quarkus with ArgoCD and a Tekton Pipeline
+  name: jump-app-template
+  title: Jump App Application deployed by ArgoCD
+  description: Create a Jump App Application deployed by ArgoCD
   tags:
-    - recommended
-    - java
-    - quarkus
-    - maven
+    - jump-app-template
+    - gitops
+    - acidonpe
 spec:
   owner: rhdh
   type: service

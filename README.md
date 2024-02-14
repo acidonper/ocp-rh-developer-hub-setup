@@ -135,7 +135,23 @@ Jump App is a microservice-based application created to emulate an enterprise ap
 
 In order to emulate a workflow in a company to onboard new Jump App application to test environments, it required to create a new template in Red Hat Developer Hub.
 
+### Enable Required Plugins
+
 WIP
+
+### Create Jump App Applicaion Templates
+
+WIP
+
+### Enable Templates
+
+```$bash
+    appConfig:
+      catalog:
+        locations:
+          - target: https://github.com/acidonper/ocp-rh-developer-hub-setup/blob/master/software-templates/templates.yaml
+            type: url
+```
 
 ## Author
 
