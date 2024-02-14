@@ -93,13 +93,6 @@ spec:
           gitops_repo_branch: ${{ parameters.gitops_repo_branch }}
         targetPath: ./tenant-catalog
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ parameters.gitops_repo_files }}
-        catalogInfoPath: "/catalog-info.yaml"
-
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
@@ -109,6 +102,13 @@ spec:
         namespace: jump-app
         repoUrl: ${{ parameters.gitops_repo }}
         path: '.'
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ parameters.gitops_repo_files }}
+        catalogInfoPath: "/catalog-info.yaml"
 
   output:
     links:
