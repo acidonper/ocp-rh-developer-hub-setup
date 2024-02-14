@@ -1,0 +1,119 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: quarkus-web-template
+  title: Quarkus Service with ArgoCD and a Tekton Pipeline
+  description: Create a simple microservice using Quarkus with ArgoCD and a Tekton Pipeline
+  tags:
+    - recommended
+    - java
+    - quarkus
+    - maven
+spec:
+  owner: rhdh
+  type: service
+  parameters:
+    - title: Provide Information for Application
+      required:
+        - component_id
+        - ocp_cluster
+        - ocp_namespace
+        - ocp_apps_domain
+        - gitops_repo
+        - gitops_repo_branch
+        - gitops_repo_files
+      properties:
+        component_id:
+          title: Name
+          type: string
+          description: Unique name of the component
+          default: jump-app
+          ui:field: EntityNamePicker
+          maxLength: 14
+        ocp_cluster:
+          title: Openshift Cluster
+          type: string
+          default: https://kubernetes.default.svc
+          description: Openshift Cluster
+        ocp_namespace:
+          title: Openshift Namespace
+          type: string
+          default: jump-app
+          description: Openshift Namespace
+        ocp_apps_domain:
+          title: Openshift Apps Domain
+          default: apps.acidonpe101.sandbox470.opentlc.com
+          type: string
+          description: Openshift Apps Domain
+        gitops_repo:
+          title: GitOps Repo
+          type: string
+          description: Jump App Applications Deployment Repo
+          default: https://github.com/acidonper/jump-app-gitops.git
+        gitops_repo_brach:
+          title: GitOps Repo Brach
+          type: string
+          description: Jump App Applications Deployment Repo Branch
+          default: feature/jump-app-dev
+        gitops_repo_files:
+          title: GitOps Repo Files
+          type: string
+          description: Jump App Applications Deployment Repo Files
+          default: https://github.com/acidonper/jump-app-gitops/blob/feature/jump-app-dev
+  steps:
+
+    - id: templates-argocd-render-local
+      name: Generating ArgoCD Resources
+      action: fetch:template
+      input:
+        url: ./scaffolders/jump-app/manifests/argocd
+        copyWithoutTemplating: []
+        values:
+          component_id: ${{ parameters.component_id }}
+          ocp_cluster: ${{ parameters.ocp_cluster }}
+          ocp_namespace: ${{ parameters.ocp_namespace }}
+          ocp_apps_domain: ${{ parameters.ocp_apps_domain }}
+          gitops_repo: ${{ parameters.gitops_repo }}
+          gitops_repo_files: ${{ parameters.gitops_repo_files }}
+          gitops_repo_branch: ${{ parameters.gitops_repo_branch }}
+        targetPath: ./tenant-gitops
+
+    - id: templates-catalog-render-local
+      name: Generating Catalog Resources
+      action: fetch:template
+      input:
+        url: ./scaffolders/jump-app/manifests/catalog
+        copyWithoutTemplating: []
+        values:
+          component_id: ${{ parameters.component_id }}
+          ocp_cluster: ${{ parameters.ocp_cluster }}
+          ocp_namespace: ${{ parameters.ocp_namespace }}
+          ocp_apps_domain: ${{ parameters.ocp_apps_domain }}
+          gitops_repo: ${{ parameters.gitops_repo }}
+          gitops_repo_files: ${{ parameters.gitops_repo_files }}
+          gitops_repo_branch: ${{ parameters.gitops_repo_branch }}
+        targetPath: ./tenant-catalog
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ parameters.gitops_repo_files }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.component_id }}-jump-app
+        argoInstance: main
+        namespace: jump-app
+        repoUrl: ${{ parameters.gitops_repo }}
+        path: '.'
+
+  output:
+    links:
+      - title: GitOps Repository
+        url: ${{ parameters.gitops_repo }}
+      - title: Open Component in catalog
+        url: ${{ parameters.gitops_repo_files }}/catalog-info.yaml

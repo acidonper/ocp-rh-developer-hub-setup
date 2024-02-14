@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${{ values.component_id }}-jump-app
+spec:
+  destination:
+    name: ''
+    namespace: ${{ values.ocp_namespace }}
+    server: ${{ values.ocp_cluster }}
+  source:
+    path: .
+    repoURL: ${{ values.gitops_repo }}
+    targetRevision: ${{ values.gitops_repo_branch }}
+    helm:
+      valueFiles:
+        - values-quay.yaml
+      parameters:
+        - name: global.appsDomain
+          value: ${{ values.ocp_apps_domain }}
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions: []
