@@ -26,7 +26,7 @@ spec:
           title: Name
           type: string
           description: Unique name of the component
-          default: jump-app
+          default: app01
           ui:field: EntityNamePicker
           maxLength: 14
         ocp_cluster:
