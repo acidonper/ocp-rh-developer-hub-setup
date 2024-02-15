@@ -93,6 +93,9 @@ upstream:
                 secretKeyRef:
                     key: password
                     name: argocd-basic-auth
+          - name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "0"
+
 ```
 
 ### Use Dynamic Plugins
