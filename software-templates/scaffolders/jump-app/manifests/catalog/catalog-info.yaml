@@ -14,4 +14,19 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: user:default/guest
+  owner: user:guest
+  providesApis:
+    - "jump-app-backend"
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: "jump-app-backend"
+  description: "Jump App Golang Backend API"
+spec:
+  type: openapi
+  lifecycle: production
+  owner: "user:guest"
+  definition:
+    $text: ./openapi.yaml

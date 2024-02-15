@@ -136,6 +136,12 @@ NOTE: Please review the following (file)[./examples/catalog-info.yaml] to see an
 
 Jump App is a microservice-based application created to emulate an enterprise application complex architecture with multi environments. This app allows users to configure a set of jumps between components and generate a continuous traffic flow defining the number of retries and their span of time.
 
+The integration between Red Hat Developer Hub and Jump App allows developer to see how the applications have been deployed in the Openshift Clusters via ArgoCD including the following features:
+
+* Display Jump App current state via ArgoCD integration
+* Display information about the GitOps repository (URL)
+* Display information about the Jump App Golang Backend API
+
 In order to emulate a workflow in a company to onboard new Jump App application to test environments, it required to create a new template in Red Hat Developer Hub.
 
 ### Enable Required Plugins

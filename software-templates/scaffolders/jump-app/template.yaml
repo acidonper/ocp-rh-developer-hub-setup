@@ -58,7 +58,7 @@ spec:
           title: GitOps Repo Files
           type: string
           description: Jump App Applications Deployment Repo Files
-          default: https://github.com/acidonper/jump-app-gitops/blob/feature/jump-app-dev
+          default: https://github.com/acidonper/jump-app-gitops/blob/feature/jump-app-dev/
         gitops_repo_file_name:
           title: GitOps Repo Catalog File
           type: string
