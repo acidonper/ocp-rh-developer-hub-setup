@@ -9,7 +9,7 @@ metadata:
     - gitops
     - acidonpe
 spec:
-  owner: user:default/guest
+  owner: user:guest
   type: service
   parameters:
     - title: Provide Information for Application
