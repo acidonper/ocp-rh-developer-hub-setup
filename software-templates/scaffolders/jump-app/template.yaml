@@ -59,6 +59,11 @@ spec:
           type: string
           description: Jump App Applications Deployment Repo Files
           default: https://github.com/acidonper/jump-app-gitops/blob/feature/jump-app-dev
+        gitops_repo_file_name:
+          title: GitOps Repo Catalog File
+          type: string
+          description: Jump App Applications Deployment Repo Catalog File
+          default: catalog-info.yaml
   steps:
 
     - id: templates-argocd-render-local
@@ -108,7 +113,7 @@ spec:
       action: catalog:register
       input:
         repoContentsUrl: ${{ parameters.gitops_repo_files }}
-        catalogInfoPath: "/catalog-info.yaml"
+        catalogInfoPath: ${{ parameters.gitops_repo_file_name }}
 
   output:
     links:
