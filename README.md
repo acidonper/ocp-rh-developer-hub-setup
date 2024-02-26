@@ -7,6 +7,9 @@ There is included a use case *Onboard Jump App Application* at the end of this d
 ## Prerequisites
 
 * Openshift 4.14+
+* Openshift GitOps
+* OC Client 4.14+
+* Helm Client v3.14.2+
 
 ## Developer Hub Setup
 
@@ -18,9 +21,32 @@ In order to install Red Hat Developer Hub, it is required to follow the next ste
 * Modify variable "OpenShift router host"
 * Create
 
+```$bash
+## Create the respective Namespaces
+$ oc new-project backstage
+$ oc new-project jump-app
+$ oc label namespace jump-app argocd.argoproj.io/managed-by=openshift-gitops --overwrite
+
+## Create ArgoCD Credentials
+$ cp examples/secret-template.yaml /tmp/secret.yaml
+$ echo "\n  username: $(echo admin | base64)" >> /tmp/secret.yaml
+$ echo "  password: $(echo ENMJ0z18aUCWf5X4KGOdhYceLPrisIyk | base64)" >> /tmp/secret.yaml
+$ echo "  url: $(echo https://openshift-gitops-server-openshift-gitops.apps.acidonpe104.sandbox1799.opentlc.com | base64)" >> /tmp/secret.yaml
+$ oc create -f /tmp/secret.yaml
+
+## Install Developer Hub
+$ helm repo add openshift-helm-charts https://charts.openshift.io/
+$ vi examples/values.yaml (*Modify global.clusterRouterBase)
+$ helm upgrade -i developer-hub -f examples/values.yaml openshift-helm-charts/redhat-developer-hub
+```
+
+NOTE: Extract original values.yaml by using command "$ helm show values openshift-helm-charts/redhat-developer-hub"
+
 Please visit the following [link](https://access.redhat.com/documentation/en-us/red_hat_developer_hub/1.0/html-single/administration_guide_for_red_hat_developer_hub/index#proc-install-rhdh-helm_admin-rhdh) for more information about the installation process.
 
-## Install Dynamic Plugins by Red Hat
+## Install Dynamic Plugins by Red Hat (*Installed by the Developer Hub Setup procedure*)
+
+**This section try to explain how the procedure to install dynamic plugins in Red Hat Developer Hub is but they are installed by the Developer Hub Setup procedure.**
 
 Red Hat Developer Hub, based on Backstage, is a single-page application composed of a set of plugins.
 
@@ -35,7 +61,7 @@ Please review the following [link](https://access.redhat.com/documentation/en-us
 
 ### Find your plugin
 
-First of all, it is important to find information about the plugin once you have decided to use it. For this mission, you can look for information to [NPM Official Web][https://www.npmjs.com/] using the plugin name (E.g. @roadiehq/scaffolder-backend-argocd).
+First of all, it is important to find information about the plugin once you have decided to use it. For this mission, you can look for information to [Backstage Plugins and Documentation](https://backstage.io/plugins/) or [NPM Official Web][https://www.npmjs.com/] using the plugin name (E.g. @roadiehq/scaffolder-backend-argocd).
 
 Once you are in the NPM documentation, it is possible to find the GitHub repository where it is easy to find more information about the plugin.
 
@@ -108,7 +134,9 @@ On the other hand, we have specific plugins to perform specific tasks in an exte
 
 NOTE: It is important to take into account that multiple frontend plugins have backend plugins associated in order to be able to display third-party systems information in the Red Hat Developer Hub Portal.
 
-## Create Templates
+## Create Templates (*Installed by the Developer Hub Setup procedure*)
+
+**This section try to explain how the procedure to create templates in Red Hat Developer Hub is but they are installed by the Developer Hub Setup procedure.**
 
 The Software Templates part of Backstage is a tool that can help clients to create Components inside Backstage. By default, it has the ability to load skeletons of code, template in some variables, and then publish the template to some locations like GitHub or GitLab.
 
@@ -132,7 +160,7 @@ The Backstage Software Catalog is a centralized system that keeps track of owner
 
 NOTE: Please review the following (file)[./examples/catalog-info.yaml] to see an example.
 
-## Jump App Application
+## Jump App Application 
 
 Jump App is a microservice-based application created to emulate an enterprise application complex architecture with multi environments. This app allows users to configure a set of jumps between components and generate a continuous traffic flow defining the number of retries and their span of time.
 
@@ -144,15 +172,46 @@ The integration between Red Hat Developer Hub and Jump App allows developer to s
 
 In order to emulate a workflow in a company to onboard new Jump App application to test environments, it required to create a new template in Red Hat Developer Hub.
 
-### Enable Required Plugins
+### Enable Required Plugins (*Installed by the Developer Hub Setup procedure*)
 
-WIP
+Please review the section "Install Dynamic Plugins" in order to understand the configuration process. 
 
-### Create Jump App Applicaion Templates
+NOTE: It is important to bear in mind that this procedure modify parameter in the Helm Chart values file and requires a Red Hat Developer Hub pod rollout.
 
-WIP
+### Create Jump App Application Templates
 
-### Enable Templates
+The Software Templates part of Backstage is a tool that can help you create Components inside Backstage. By default, it has the ability to load skeletons of code, template in some variables, and then publish the template to some locations like GitHub or GitLab.
+
+Templates are stored in the Software Catalog under a kind Template. You can create your own templates with a small yaml definition which describes the template and its metadata, along with some input variables that your template will need, and then a list of actions which are then executed by the scaffolding service.
+
+The most important parts of a template are included in the following list:
+
+* type
+* owner
+* parameters
+* steps
+
+```$yaml
+...
+spec:
+  type: website
+  owner: team-a
+  parameters:
+    - name: Enter some stuff
+      description: Enter some stuff
+  ...
+  steps:
+    action: publish:github
+    ...
+    input:
+        ...
+        gitAuthorName: ${{ user.entity.metadata.name }}
+        gitAuthorEmail: ${{ user.entity.spec.profile.email }}
+```
+
+### Enable Templates (*Installed by the Developer Hub Setup procedure*)
+
+**This section try to explain how the procedure to install a new template in Red Hat Developer Hub is but it is installed by the Developer Hub Setup procedure.**
 
 ```$bash
     appConfig:
@@ -165,6 +224,14 @@ WIP
             rules:
               - allow: [Template]
 ```
+
+## Interesting Links
+
+* [Red Hat Developer Hub Official Documentation](https://access.redhat.com/documentation/en-us/red_hat_developer_hub/1.0/html-single/administration_guide_for_red_hat_developer_hub/index#snip-customer-support-info_admin-rhdh)
+* [Backstage Documentation](https://backstage.io/docs/overview/what-is-backstage)
+* [Backstage Plugins and Documentation](https://backstage.io/plugins/)
+* [Red Hat Developer Hub - Supported Plugins](https://access.redhat.com/documentation/en-us/red_hat_developer_hub/1.0/html-single/administration_guide_for_red_hat_developer_hub/index#proc-install-rhdh-helm_admin-rhdh)
+* [NPM Packages repository](https://www.npmjs.com/)
 
 ## Author
 

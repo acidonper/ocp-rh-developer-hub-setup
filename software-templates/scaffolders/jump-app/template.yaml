@@ -48,17 +48,17 @@ spec:
           title: GitOps Repo
           type: string
           description: Jump App Applications Deployment Repo
-          default: https://github.com/acidonper/jump-app-gitops.git
+          default: https://github.com/autstudent/developerhubtest.git
         gitops_repo_branch:
           title: GitOps Repo Brach
           type: string
           description: Jump App Applications Deployment Repo Branch
-          default: feature/jump-app-dev
+          default: main
         gitops_repo_files:
           title: GitOps Repo Files
           type: string
           description: Jump App Applications Deployment Repo Files
-          default: https://github.com/acidonper/jump-app-gitops/blob/feature/jump-app-dev/
+          default: https://github.com/autstudent/developerhubtest/blob/main/
         gitops_repo_file_name:
           title: GitOps Repo Catalog File
           type: string
@@ -97,6 +97,8 @@ spec:
           gitops_repo_files: ${{ parameters.gitops_repo_files }}
           gitops_repo_branch: ${{ parameters.gitops_repo_branch }}
         targetPath: ./tenant-catalog
+
+    ## TODO: Upload these files to a Git repository
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources
