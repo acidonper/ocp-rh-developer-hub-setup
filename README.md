@@ -7,7 +7,6 @@ There is included a use case *Onboard Jump App Application* at the end of this d
 ## Prerequisites
 
 * Openshift 4.14+
-* Openshift GitOps
 * OC Client 4.14+
 * Helm Client v3.14.2+
 
@@ -15,34 +14,31 @@ There is included a use case *Onboard Jump App Application* at the end of this d
 
 In order to install Red Hat Developer Hub, it is required to follow the next steps:
 
-* Create a project in the OpenShift
-* Switch to Developer mode on your Red Hat OpenShift web console
-* Add -> Helm Chart -> Red Hat Developer Hub -> Create
-* Modify variable "OpenShift router host"
-* Create
-
 ```$bash
+## Install Openshift GitOps
+$ oc apply -f files/argocd.yaml
+
 ## Create the respective Namespaces
 $ oc new-project backstage
 $ oc new-project jump-app
 $ oc label namespace jump-app argocd.argoproj.io/managed-by=openshift-gitops --overwrite
 
 ## Create ArgoCD Credentials
-$ cp examples/secret-template.yaml /tmp/secret.yaml
+$ cp files/secret-template.yaml /tmp/secret.yaml
 $ echo "\n  username: $(echo admin | base64)" >> /tmp/secret.yaml
-$ echo "  password: $(echo ENMJ0z18aUCWf5X4KGOdhYceLPrisIyk | base64)" >> /tmp/secret.yaml
-$ echo "  url: $(echo https://openshift-gitops-server-openshift-gitops.apps.acidonpe104.sandbox1799.opentlc.com | base64)" >> /tmp/secret.yaml
+$ echo "  password: $(oc get secret openshift-gitops-cluster -o jsonpath='{.data.admin\.password}' -n openshift-gitops | base64 -d)" >> /tmp/secret.yaml
+$ echo "  url: $(oc get route openshift-gitops-server -n openshift-gitops -o jsonpath='{.spec.host}' | base64)" >> /tmp/secret.yaml
 $ oc create -f /tmp/secret.yaml
 
 ## Install Developer Hub
 $ helm repo add openshift-helm-charts https://charts.openshift.io/
-$ vi examples/values.yaml (*Modify global.clusterRouterBase)
-$ helm upgrade -i developer-hub -f examples/values.yaml openshift-helm-charts/redhat-developer-hub
+$ vi files/values.yaml (*Modify global.clusterRouterBase)
+$ helm upgrade -i developer-hub -f files/values.yaml openshift-helm-charts/redhat-developer-hub
 ```
 
 NOTE: Extract original values.yaml by using command "$ helm show values openshift-helm-charts/redhat-developer-hub"
 
-Please visit the following [link](https://access.redhat.com/documentation/en-us/red_hat_developer_hub/1.0/html-single/administration_guide_for_red_hat_developer_hub/index#proc-install-rhdh-helm_admin-rhdh) for more information about the installation process.
+Please visit the following [link](https://access.redhat.com/documentation/en-us/red_hat_developer_hub/1.0/html-single/administration_guide_for_red_hat_developer_hub/index#proc-install-rhdh-helm_admin-rhdh) for more information about the installation process via Web Console.
 
 ## Install Dynamic Plugins by Red Hat (*Installed by the Developer Hub Setup procedure*)
 
@@ -74,7 +70,7 @@ Once the dynamic plugins have been found, it is time to install and configure th
 * Add sensitive information via secrets (E.g. ArgoCD information for plugins)
 
 ```$bash
-oc create -f examples/secret.yaml
+oc create -f /tmp/secret.yaml
 ```
 
 * Enable the different plugins and add sensitive information (required Env Vars) from the respective secrets

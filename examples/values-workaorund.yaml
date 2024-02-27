@@ -2,7 +2,7 @@ global:
   auth:
     backend:
       enabled: true
-  clusterRouterBase: apps.acidonpe104.sandbox1799.opentlc.com
+  clusterRouterBase: apps.acidonpe105.sandbox2885.opentlc.com
   dynamic:
     includes:
       - dynamic-plugins.default.yaml
@@ -40,7 +40,7 @@ upstream:
           - name: main
             url: '${ARGOCD_INSTANCE1_URL}'
             username: 'admin'
-            password: 'xxxxxx'
+            password: 'xxx'
       app:
         baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
       backend:
